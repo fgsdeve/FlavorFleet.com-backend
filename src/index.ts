@@ -4,28 +4,25 @@ import "dotenv/config";
 import mongoose from "mongoose";
 import MyUserRoute from './routes/MyUserRoute';
 
-mongoose.connect(process.env.MONGODB_CONNECTION_STRING as string)
-  .then(() => console.log('Connected to the database!'))
-  .catch((err) => console.error('Database connection error:', err));
+mongoose.connect(process.env.MONGODB_CONNECTION_STRING as string, {
+  serverSelectionTimeoutMS: 30000, // Increase the timeout to 30 seconds
+  socketTimeoutMS: 45000,          // Increase the socket timeout to 45 seconds
+})
+.then(() => console.log('Connected to the database!'))
+.catch((err) => console.error('Database connection error:', err));
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 
-// Configure CORS
-const corsOptions = {
-  origin: 'https://flavorfleet-com-frontend.onrender.com', // Allow requests from your frontend
-  optionsSuccessStatus: 200 // For legacy browser support
-};
-
-app.use(cors(corsOptions));
 
 app.get("/health", async (req: Request, res: Response) => {
-  res.send({ message: "health OK!" });
-});
+    res.send({ message: "health OK!" });
+  });
 
-app.use("/api/my/user", MyUserRoute);
+app.use("/api/my/user", MyUserRoute)
 
 const PORT = process.env.PORT || 7000;
 app.listen(PORT, () => {
-  console.log(`Server started on localhost:${PORT}`);
+    console.log(`Server started on localhost:${PORT}`);
 });
