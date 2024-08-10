@@ -24,7 +24,8 @@ export const jwtParse = async (
   next: NextFunction
 ) => {
   const { authorization } = req.headers;
-
+/*   console.log('Authorization:', authorization);
+ */
   if (!authorization || !authorization.startsWith("Bearer ")) {
     return res.sendStatus(401);
   }
@@ -33,18 +34,22 @@ export const jwtParse = async (
 
   try {
     const decoded = jwt.decode(token) as jwt.JwtPayload;
+    if(!decoded || !decoded.sub){
+      throw new Error ('Invalid token')
+    }
     const auth0Id = decoded.sub;
 
     const user = await User.findOne({ auth0Id });
 
     if (!user) {
-      return res.sendStatus(401);
+      return res.sendStatus(401).json({message:'User not found'});
     }
 
     req.auth0Id = auth0Id as string;
     req.userId = user._id.toString();
     next();
   } catch (error) {
-    return res.sendStatus(401);
+    console.error('Error in jwtParse:', error);
+    return res.sendStatus(401).json({message: 'Unauthorized'});
   }
 };

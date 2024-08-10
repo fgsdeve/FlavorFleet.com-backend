@@ -2,17 +2,16 @@ import express, { Request, Response } from "express";
 import cors from "cors";
 import "dotenv/config";
 import mongoose from "mongoose";
-import { jwtCheck, jwtParse } from "./middleware/auth";
 import MyUserRoute from './routes/MyUserRoute';
 
 mongoose.connect(process.env.MONGODB_CONNECTION_STRING as string)
-    .then(() => console.log('connect to the database!'));
+.then(() => console.log('Connected to the database!'))
+.catch((err) => console.error('Database connection error:', err));
 
 const app = express();
 app.use(express.json());
 app.use(cors());
-app.use(jwtCheck);
-app.use(jwtParse);
+
 
 app.get("/health", async (req: Request, res: Response) => {
     res.send({ message: "health OK!" });
@@ -20,6 +19,7 @@ app.get("/health", async (req: Request, res: Response) => {
 
 app.use("/api/my/user", MyUserRoute)
 
-app.listen(7000, () => {
-    console.log('server started on localhost:7000');
+const PORT = process.env.PORT || 7000;
+app.listen(PORT, () => {
+    console.log(`Server started on localhost:${PORT}`);
 });
