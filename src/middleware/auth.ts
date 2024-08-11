@@ -6,16 +6,16 @@ import User from "../models/user";
 declare global {
   namespace Express {
     interface Request {
-      userId:string;
-      auth0Id:string;
+      userId: string;
+      auth0Id: string;
     }
   }
 }
 
-  export const jwtCheck = auth({
+export const jwtCheck = auth({
   audience: process.env.AUTH0_AUDIENCE,
   issuerBaseURL: process.env.AUTH0_ISSUER_BASE_URL,
-  tokenSigningAlg: 'RS256'
+  tokenSigningAlg: 'RS256',
 });
 
 export const jwtParse = async (
@@ -24,25 +24,24 @@ export const jwtParse = async (
   next: NextFunction
 ) => {
   const { authorization } = req.headers;
-/*   console.log('Authorization:', authorization);
- */
+
   if (!authorization || !authorization.startsWith("Bearer ")) {
-    return res.sendStatus(401);
+    return res.status(401).json({ message: 'Unauthorized: Missing or invalid token' });
   }
 
   const token = authorization.split(" ")[1];
 
   try {
     const decoded = jwt.decode(token) as jwt.JwtPayload;
-    if(!decoded || !decoded.sub){
-      throw new Error ('Invalid token')
+    if (!decoded || !decoded.sub) {
+      return res.status(401).json({ message: 'Unauthorized: Invalid token' });
     }
-    const auth0Id = decoded.sub;
 
+    const auth0Id = decoded.sub;
     const user = await User.findOne({ auth0Id });
 
     if (!user) {
-      return res.sendStatus(401).json({message:'User not found'});
+      return res.status(401).json({ message: 'User not found' });
     }
 
     req.auth0Id = auth0Id as string;
@@ -50,6 +49,6 @@ export const jwtParse = async (
     next();
   } catch (error) {
     console.error('Error in jwtParse:', error);
-    return res.sendStatus(401).json({message: 'Unauthorized'});
+    return res.status(401).json({ message: 'Unauthorized' });
   }
 };
