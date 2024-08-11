@@ -4,10 +4,7 @@ import "dotenv/config";
 import mongoose from "mongoose";
 import MyUserRoute from './routes/MyUserRoute';
 
-mongoose.connect(process.env.MONGODB_CONNECTION_STRING as string, {
-  serverSelectionTimeoutMS: 30000, // Increase the timeout to 30 seconds
-  socketTimeoutMS: 45000,          // Increase the socket timeout to 45 seconds
-})
+mongoose.connect(process.env.MONGODB_CONNECTION_STRING as string)
 .then(() => console.log('Connected to the database!'))
 .catch((err) => console.error('Database connection error:', err));
 
