@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import MyUserRoute from './routes/MyUserRoute';
 
 mongoose.connect(process.env.MONGODB_CONNECTION_STRING as string)
+
 .then(() => console.log('Connected to the database!'))
 .catch((err) => console.error('Database connection error:', err));
 
