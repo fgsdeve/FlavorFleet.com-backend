@@ -4,7 +4,7 @@
   "main": "./src/index.ts",
   "scripts": {
     "dev": "nodemon src/index.ts",
-    "build": "npm install && npx tsc",
+    "build": "npx tsc",
     "start": "node dist/index.js"
   },
   "keywords": [],
@@ -32,5 +32,8 @@
     "@types/node": "^22.0.0",
     "nodemon": "^3.1.4",
     "ts-node": "^10.9.2"
+  },
+  "engines": {
+    "node": ">= 20.2.0"
   }
 }

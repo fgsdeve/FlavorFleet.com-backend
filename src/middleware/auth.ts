@@ -36,6 +36,9 @@ export const jwtParse = async (
     const decoded = jwt.decode(token) as jwt.JwtPayload;
     const auth0Id = decoded.sub;
 
+    console.log("auth0Id:", auth0Id); // Log the auth0Id
+
+
     const user = await User.findOne({ auth0Id });
 
     if (!user) {
@@ -46,6 +49,7 @@ export const jwtParse = async (
     req.userId = user._id.toString();
     next();
   } catch (error) {
+    console.error("JWT parsing error:", error); // Log any error during JWT parsing
     return res.sendStatus(401);
   }
 };
