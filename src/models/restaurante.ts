@@ -21,8 +21,9 @@ const restaurantSchema = new mongoose.Schema({
   cuisines: [{ type: String, required: true }],
   menuItems: [menuItemSchema],
   imageUrl: { type: String, required: true },
-  lastUpdated: { type: Date, required: true },
+  lastUpdated: { type: Date, required: true},
 });
+
 
 const Restaurant = mongoose.model("Restaurant", restaurantSchema);
 export default Restaurant;

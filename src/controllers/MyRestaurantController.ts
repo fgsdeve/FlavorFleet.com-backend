@@ -11,7 +11,7 @@ const getMyRestaurant = async (req: Request, res: Response) => {
     }
     res.json(restaurant);
   } catch (error) {
-    console.log("error", error);
+    console.log("Error fetching restaurant:", error);
     res.status(500).json({ message: "Error fetching restaurant" });
   }
 };
@@ -21,15 +21,10 @@ const createMyRestaurant = async (req: Request, res: Response) => {
     const existingRestaurant = await Restaurant.findOne({ user: req.userId });
 
     if (existingRestaurant) {
-      console.log("Restaurant already exists for this user");
       return res
         .status(409)
         .json({ message: "User restaurant already exists" });
     }
-    /*  const image = req.file as Express.Multer.File;
-    const base64Image = Buffer.from(image.buffer).toString("base64");
-    const dataURI = `data:${image.mimetype};base64,${base64Image}`;
-    const uploadResponse = await cloudinary.v2.uploader.upload(dataURI); */
 
     const imageUrl = await uploadImage(req.file as Express.Multer.File);
 
@@ -39,24 +34,27 @@ const createMyRestaurant = async (req: Request, res: Response) => {
     restaurant.lastUpdated = new Date();
     await restaurant.save();
 
-    console.log("Restaurant successfully created and saved:", restaurant);
-
     res.status(201).send(restaurant);
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Something went wrong during restaurant creation" });
+    console.log(error);
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
 
 const updateMyRestaurant = async (req: Request, res: Response) => {
   try {
-    const restaurant = await Restaurant.findOne({ user: req.userId });
+    // Log incoming request data
+    console.log("Request body before update:", req.body);
+
+    const restaurant = await Restaurant.findOne({
+      user: req.userId,
+    });
 
     if (!restaurant) {
       return res.status(404).json({ message: "restaurant not found" });
     }
 
+    // Update fields
     restaurant.restaurantName = req.body.restaurantName;
     restaurant.city = req.body.city;
     restaurant.country = req.body.country;
@@ -64,18 +62,19 @@ const updateMyRestaurant = async (req: Request, res: Response) => {
     restaurant.estimatedDeliveryTime = req.body.estimatedDeliveryTime;
     restaurant.cuisines = req.body.cuisines;
     restaurant.menuItems = req.body.menuItems;
-    restaurant.lastUpdated = req.body.lastUpdated;
+    restaurant.lastUpdated = new Date();
 
     if (req.file) {
       const imageUrl = await uploadImage(req.file as Express.Multer.File);
       restaurant.imageUrl = imageUrl;
     }
 
+    console.log("Saving restaurant with lastUpdated:", restaurant.lastUpdated);
     await restaurant.save();
     res.status(200).send(restaurant);
   } catch (error) {
-    console.log("error", error);
-    res.status(500).json({ message: "Error updating restaurant" });
+    console.log("Error during restaurant update:", error);
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
 
@@ -87,8 +86,9 @@ const uploadImage = async (file: Express.Multer.File) => {
   const uploadResponse = await cloudinary.v2.uploader.upload(dataURI);
   return uploadResponse.url;
 };
+
 export default {
-  createMyRestaurant,
   getMyRestaurant,
+  createMyRestaurant,
   updateMyRestaurant,
 };
