@@ -64,7 +64,7 @@ const searchRestaurant = async (req: Request, res: Response) => {
 
     // sortOption = "lastUpdated"
     const restaurants = await Restaurant.find(query)
-      .sort({ [sortOption]: -1 })
+      .sort({ [sortOption]: 1 })
       .skip(skip)
       .limit(pageSize)
       .lean();
