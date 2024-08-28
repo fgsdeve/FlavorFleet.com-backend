@@ -17,8 +17,7 @@ export const jwtCheck = auth({
   issuerBaseURL: process.env.AUTH0_ISSUER_BASE_URL,
   tokenSigningAlg: "RS256",
 });
-console.log("Audience:", process.env.AUTH0_AUDIENCE);
-console.log("Issuer:", process.env.AUTH0_ISSUER_BASE_URL);
+
 
 
 export const jwtParse = async (

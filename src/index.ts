@@ -4,7 +4,8 @@ import "dotenv/config";
 import mongoose from "mongoose";
 import myUserRoute from './routes/MyUserRoute';
 import { v2 as cloudinary } from "cloudinary";
-import myRestaurantRoute from './routes/MyRestaurantRoute'
+import myRestaurantRoute from './routes/MyRestaurantRoute';
+import RestaurantRoute from "./routes/RestaurantRoute"
 
 
 mongoose
@@ -33,7 +34,7 @@ app.get("/health", async (req: Request, res: Response) => {
 //API end point
 app.use("/api/my/user", myUserRoute);
 app.use("/api/my/restaurant", myRestaurantRoute);
-console.log("Rota /api/my/restaurant foi registrada");
+app.use("/api/restaurant", RestaurantRoute);
 
 app.use((err: any, req: Request, res: Response, next: any) => {
   console.error(err.stack);
