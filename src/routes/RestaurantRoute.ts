@@ -1,8 +1,18 @@
-import { param, validationResult } from 'express-validator';
-import express, { Request, Response, NextFunction } from 'express';
+import { param, validationResult } from "express-validator";
+import express, { Request, Response, NextFunction } from "express";
 import RestaurantController from "../controllers/RestaurantController";
 
 const router = express.Router();
+
+router.get(
+  "/:restaurantId",
+  param("restarauntId")
+    .isString()
+    .trim()
+    .notEmpty()
+    .withMessage("restaurantId parameter must be a valid string"),
+    RestaurantController.getRestaurant
+);
 
 router.get(
   "/search/:city",
@@ -11,7 +21,7 @@ router.get(
     .trim()
     .notEmpty()
     .withMessage("City parameter must be a valid string"),
-  
+
   // Middleware to handle validation errors
   (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
